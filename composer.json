@@ -1,0 +1,32 @@
+{
+    "name": "dennisblight/slim4-mix",
+    "version": "0.1",
+    "description": "Slim 4 Framework Boilerplate for PHP 7.3",
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "slim/slim": "^4.9",
+        "php-di/php-di": "^6.3",
+        "php-di/slim-bridge": "^3.2",
+        "laminas/laminas-diactoros": "^2.9",
+        "doctrine/annotations": "^1.13",
+        "monolog/monolog": "^2.5",
+        "nesbot/carbon": "^2.57",
+        "respect/validation": "^2.2",
+        "firebase/php-jwt": "^6.1",
+        "symfony/http-client": "^5.4",
+        "symfony/mime": "^5.4",
+        "symfony/filesystem": "^5.4",
+        "symfony/asset": "^5.4",
+        "phpfastcache/phpfastcache": "^8.1",
+        "cakephp/datasource": "^4.3",
+        "cakephp/database": "^4.3",
+        "cakephp/orm": "^4.3",
+        "eftec/bladeone": "^4.5",
+        "bryanjhv/slim-session": "^4.1"
+    }
+}
