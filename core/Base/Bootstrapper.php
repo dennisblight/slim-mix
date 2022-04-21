@@ -5,6 +5,9 @@ use Slim\App;
 use DI\Container;
 use Core\Collection;
 use Core\Route\AnnotationRoute;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Slim\Handlers\Strategies\RequestHandler;
 
 abstract class Bootstrapper
 {
@@ -39,7 +42,7 @@ abstract class Bootstrapper
         $trailing = 4;
         foreach(glob($configPattern) as $script)
         {
-            $configKey = 'config.' . substr($script, $offset, -$trailing);
+            $configKey = substr($script, $offset, -$trailing);
             $configDefinition[$configKey] = 0x01;
         }
 
@@ -50,7 +53,7 @@ abstract class Bootstrapper
             $trailing = strlen(ENVIRONMENT) + 5;
             foreach(glob($configPattern) as $script)
             {
-                $configKey = 'config.' . substr($script, $offset, -$trailing);
+                $configKey = substr($script, $offset, -$trailing);
                 $configDefinition[$configKey] = 0x02 | array_item($configDefinition, $configKey, 0);
             }
 
@@ -59,7 +62,7 @@ abstract class Bootstrapper
             $trailing = 4;
             foreach(glob($configPattern) as $script)
             {
-                $configKey = 'config.' . substr($script, $offset, -$trailing);
+                $configKey = substr($script, $offset, -$trailing);
                 $configDefinition[$configKey] = 0x04 | array_item($configDefinition, $configKey, 0);
             }
         }
@@ -74,7 +77,7 @@ abstract class Bootstrapper
 
     private function injectConfig(Container $container, string $configKey, int $flag)
     {
-        $container->set($configKey, function() use ($configKey, $flag) {
+        $container->set('config.' . $configKey, function() use ($configKey, $flag) {
             $configPath = BASEPATH . '/app/config/';
             $config = new Collection([], true);
 
@@ -165,6 +168,11 @@ abstract class Bootstrapper
 
         /** @var App */
         $app = $container->get(App::class);
+        
+        $app->add(function(ServerRequest $request, $handler) use ($container) {
+            $container->set(ServerRequest::class, $request);
+            return $handler->handle($request);
+        });
 
         $middlewares = $settings->get('middleware', []);
         foreach($middlewares as $index => $middleware)
@@ -189,6 +197,8 @@ abstract class Bootstrapper
                 $container->get('logger')->warning("Couldn't resolve middleware index {$index} -> {$middleware}");
             }
         }
+
+        $app->addBodyParsingMiddleware();
     }
 
     public function registerRoutes(Container $container)

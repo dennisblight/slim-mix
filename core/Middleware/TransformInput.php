@@ -7,22 +7,24 @@ use Laminas\Diactoros\ServerRequest;
 abstract class TransformInput
 {
     protected $fields = null;
-    protected $params = [];
+    protected $postParams = [];
+    protected $queryParams = [];
 
     public function __invoke(ServerRequest $request, Response $response, callable $next)
     {
         if($request->getMethod() == 'POST')
         {
-            $this->params = $request->getParsedBody();
-            $this->transformParameter();
-            return $next($request->withParsedBody($this->params), $response);
+            $this->postParams = $request->getParsedBody();
         }
-        else
-        {
-            $this->params = $request->getQueryParams();
-            $this->transformParameter();
-            return $next($request->withQueryParams($this->params), $response);
-        }
+
+        $this->params = $request->getQueryParams();
+        $this->transformParameter();
+        return $next(
+            $request
+                ->withQueryParams($this->queryParams)
+                ->withParsedBody($this->postParams),
+            $response
+        );
     }
 
     protected function transformParameter()
