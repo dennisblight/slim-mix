@@ -1,15 +1,12 @@
 <?php
 namespace Core\Route;
 
+use Slim\App;
+use DI\Container;
 use ReflectionClass;
 use ReflectionMethod;
-use Core\Facades\Cache;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Core\Annotation\Route;
-use DI\Container;
-use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
-use Slim\App;
-use Slim\Route as SlimRoute;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 class AnnotationRoute
 {
