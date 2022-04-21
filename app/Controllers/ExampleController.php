@@ -8,6 +8,7 @@ use Cake\ORM\Locator\TableLocator;
 use Core\Annotation\Route;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use SlimSession\Helper as Session;
 
 /**
  * @Route\Group("/")
@@ -17,9 +18,8 @@ class ExampleController
     /**
      * @Route\Post("/")
      */
-    public function index(LoginForm $form, Users $userTable)
+    public function index(Session $session)
     {
-        $users = $userTable->find();
-        return new Response\JsonResponse(($users));
+        return new Response\JsonResponse($session->get('user'));
     }
 }

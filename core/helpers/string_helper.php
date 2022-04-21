@@ -168,3 +168,19 @@ if(!function_exists('string_equals'))
         return $equals;
     }
 }
+
+if(!function_exists('urlsafe_base64_encode'))
+{
+    function urlsafe_base64_encode($value)
+    {
+        return strtr(base64_encode($value), '+/=', '._-');
+    }
+}
+
+if(!function_exists('urlsafe_base64_decode'))
+{
+    function urlsafe_base64_decode($value)
+    {
+        return base64_decode(strtr($value, '._-', '+/='));
+    }
+}

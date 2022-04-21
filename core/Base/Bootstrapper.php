@@ -114,9 +114,9 @@ abstract class Bootstrapper
         {
             foreach(glob($dependenciesPath . '/*.php') as $script)
             {
-                $load = function($serviceProviders) use ($script) {
+                $load = function($container) use ($script) {
                     $call = require $script;
-                    if(is_callable($call)) $call($serviceProviders);
+                    if(is_callable($call)) $call($container);
                 };
 
                 $load($container);
