@@ -5,7 +5,7 @@ use Core\Base\AbstractForm;
 
 class LoginForm extends AbstractForm
 {
-    protected $properties = [
+    public static $properties = [
         'username',
         'password',
     ];

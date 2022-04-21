@@ -90,7 +90,7 @@ class AnnotationRoute
                 {
                     array_push($routes, [
                         $annotation->methods,
-                        $basePath . $annotation->path,
+                        $this->cleanUrl($basePath . $annotation->path),
                         [$controller, $action->name],
                         $annotation->name,
                         $annotation->arguments,
@@ -181,5 +181,16 @@ class AnnotationRoute
         }
 
         return $route;
+    }
+
+    private function cleanUrl($url)
+    {
+        $url = rtrim($url, '\/');
+        while(($pos = strpos($url, '//')) !== false)
+        {
+            $url = str_replace('//', '/', $pos);
+        }
+
+        return $url;
     }
 }

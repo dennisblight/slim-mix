@@ -9,6 +9,9 @@ use Core\Annotation\Route;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 
+/**
+ * @Route\Group("/")
+ */
 class ExampleController
 {
     /**
@@ -17,7 +20,6 @@ class ExampleController
     public function index(LoginForm $form, Users $userTable)
     {
         $users = $userTable->find();
-        // var_dump($users);exit;
         return new Response\JsonResponse(($users));
     }
 }

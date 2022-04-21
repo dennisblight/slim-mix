@@ -6,7 +6,7 @@ use Laminas\Diactoros\ServerRequest;
 
 class TrimSlashes
 {
-    function __invoke(ServerRequest $request, Response $response, callable $next) {
+    function __invoke(ServerRequest $request, $handler) {
         
 		$uri = $request->getUri();
 		$path = $uri->getPath();
@@ -19,10 +19,9 @@ class TrimSlashes
 			// permanently redirect paths with a trailing slash
 			// to their non-trailing counterpart
 			$uri = $uri->withPath($path);
-
-			return $next($request->withUri($uri), $response);
+			$request = $request->withUri($uri);
 		}
 
-		return $next($request, $response);
+		return $handler->handle($request);
 	}
 }

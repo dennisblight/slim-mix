@@ -3,7 +3,7 @@ namespace Core\Base;
 
 abstract class AbstractEntity extends AbstractCollection
 {
-    protected $properties = null;
+    public static $properties = null;
 
     /**
      * @param array $data

@@ -1,9 +1,9 @@
 <?php
 
+use DI\Container;
+use Core\Collection;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Core\Collection;
-use DI\Container;
 
 return function (Container $container) {
     

@@ -5,5 +5,5 @@ use Core\Base\AbstractEntity;
 
 class User extends AbstractEntity
 {
-    protected $properties = ['id', 'username', 'password_hash', 'name', 'email'];
+    // public $properties = ['id', 'username', 'password_hash', 'name', 'email'];
 }
