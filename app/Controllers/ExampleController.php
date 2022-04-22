@@ -9,6 +9,8 @@ use Core\Annotation\Route;
 use eftec\bladeone\BladeOne;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Slim\Exception\HttpForbiddenException;
+use Slim\Exception\HttpNotFoundException;
 use SlimSession\Helper as Session;
 
 /**
@@ -19,9 +21,9 @@ class ExampleController
     /**
      * @Route\Post("/")
      */
-    public function index(Session $session)
+    public function index(LoginForm $form, ServerRequest $request)
     {
-        return new Response\JsonResponse($session->get('user'));
+        return new Response\JsonResponse([]);
     }
 
     /**

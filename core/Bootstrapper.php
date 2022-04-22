@@ -22,6 +22,7 @@ final class Bootstrapper extends BaseBootstrapper
         $bootstrapper->registerDependencies($container);
         $bootstrapper->registerHelpers($container);
         $bootstrapper->registerMiddlewares($container);
+        $bootstrapper->registerErrorHandler($container);
         $bootstrapper->registerRoutes($container);
         $bootstrapper->configure($container);
 

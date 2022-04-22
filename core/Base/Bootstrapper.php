@@ -4,10 +4,17 @@ namespace Core\Base;
 use Slim\App;
 use DI\Container;
 use Core\Collection;
+use Core\ErrorHandler;
+use Core\ErrorHandler\FormValidationHandler;
+use Core\ErrorHandler\SlimHttpHandler;
 use Core\Route\AnnotationRoute;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Psr\Log\LoggerInterface;
+use Respect\Validation\Exceptions\ValidationException;
+use Slim\Exception\HttpException;
 use Slim\Handlers\Strategies\RequestHandler;
+use Slim\Middleware\ErrorMiddleware;
 
 abstract class Bootstrapper
 {
@@ -199,6 +206,31 @@ abstract class Bootstrapper
         }
 
         $app->addBodyParsingMiddleware();
+    }
+
+    public function registerErrorHandler(Container $container)
+    {
+        /** @var App */
+        $app = $container->get(App::class);
+
+        /** @var Collection */
+        $config = $container->get('settings')->get('errors', new Collection());
+
+        if(!$config->get('enableErrorHandler', true))
+            return;
+
+        $middleware = $app->addErrorMiddleware(
+            $config->get('displayErrorDetails', false),
+            $config->get('logErrors', false),
+            $config->get('logErrorsDetails', false)
+        );
+
+        foreach($config->get('handlers', []) as $handler => $types)
+        {
+            $middleware->setErrorHandler($types, $handler);
+        }
+
+        $container->set(ErrorMiddleware::class, $middleware);
     }
 
     public function registerRoutes(Container $container)

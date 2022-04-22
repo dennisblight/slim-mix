@@ -1,6 +1,8 @@
 <?php
 namespace Core\Base;
 
+use Respect\Validation\Rules;
+use Respect\Validation\Validatable;
 use Laminas\Diactoros\ServerRequest;
 
 abstract class AbstractForm extends AbstractEntity
@@ -13,7 +15,14 @@ abstract class AbstractForm extends AbstractEntity
 
     public function __construct(ServerRequest $request)
     {
-        parent::__construct($request->getParsedBody() ?? []);
+        $params = $request->getQueryParams() ?? [];
+        if($request->getMethod() == 'POST')
+        {
+            $params = array_merge($params, $request->getParsedBody() ?? []);
+        }
+
+        parent::__construct($params);
+        $this->validate();
     }
 
     public function __set($name, $value)
@@ -32,5 +41,15 @@ abstract class AbstractForm extends AbstractEntity
         }
 
         parent::__set($name, $value);
+    }
+
+    public function getValidator(): Validatable
+    {
+        return new Rules\AlwaysValid();
+    }
+
+    public function validate()
+    {
+        $this->getValidator()->assert($this->all());
     }
 }
