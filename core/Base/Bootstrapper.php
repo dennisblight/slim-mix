@@ -13,6 +13,8 @@ use Laminas\Diactoros\ServerRequest;
 use Psr\Log\LoggerInterface;
 use Respect\Validation\Exceptions\ValidationException;
 use Slim\Exception\HttpException;
+use Slim\Exception\HttpMethodNotAllowedException;
+use Slim\Exception\HttpSpecializedException;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Middleware\ErrorMiddleware;
 
@@ -199,10 +201,6 @@ abstract class Bootstrapper
             {
                 $app->add($middleware);
             }
-            else
-            {
-                $container->get('logger')->warning("Couldn't resolve middleware index {$index} -> {$middleware}");
-            }
         }
 
         $app->addBodyParsingMiddleware();
@@ -227,7 +225,7 @@ abstract class Bootstrapper
 
         foreach($config->get('handlers', []) as $handler => $types)
         {
-            $middleware->setErrorHandler($types, $handler);
+            $middleware->setErrorHandler($types, $handler, true);
         }
 
         $container->set(ErrorMiddleware::class, $middleware);
