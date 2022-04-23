@@ -30,6 +30,11 @@ trait CollectionTrait
         return $this->get($name);
     }
 
+    public function __unset(string $name)
+    {
+        $this->remove($name);
+    }
+
     public function remove($key): void
     {
         if($this->has($key))

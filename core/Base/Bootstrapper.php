@@ -13,8 +13,6 @@ use Laminas\Diactoros\ServerRequest;
 use Psr\Log\LoggerInterface;
 use Respect\Validation\Exceptions\ValidationException;
 use Slim\Exception\HttpException;
-use Slim\Exception\HttpMethodNotAllowedException;
-use Slim\Exception\HttpSpecializedException;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Middleware\ErrorMiddleware;
 
@@ -200,6 +198,10 @@ abstract class Bootstrapper
             elseif(is_callable($middleware))
             {
                 $app->add($middleware);
+            }
+            else
+            {
+                $container->get('logger')->warning("Couldn't resolve middleware index {$index} -> {$middleware}");
             }
         }
 

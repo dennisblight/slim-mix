@@ -41,6 +41,31 @@ class Password
         return $password;
     }
 
+    public function checkHash($password, $hash)
+    {
+        $algo = $this->config->get('algo', PASSWORD_BCRYPT);
+
+        $password = $this->transform($password);
+
+        switch($algo)
+        {
+            case PASSWORD_DEFAULT:
+            case PASSWORD_BCRYPT:
+                return password_verify($password, $hash);
+            case 'md5':
+                return string_equals(md5($password), $hash);
+            case 'sha1':
+                return string_equals(sha1($password), $hash);
+        }
+
+        if(in_array($algo, hash_algos()))
+        {
+            return string_equals(hash($algo, $password),  $hash);
+        }
+        
+        return string_equals($password, $hash);
+    }
+
     private function transform($password)
     {
         $salt = $this->config->get('salt');

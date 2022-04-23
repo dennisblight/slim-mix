@@ -51,3 +51,16 @@ if(!function_exists('get_base_url'))
         return $baseURL;
     }
 }
+
+if(!function_exists('url'))
+{
+    function url($path = ''): string
+    {
+        $url = get_base_path() . '/' . $path;
+        while(strpos($url, '//') !== false)
+        {
+            $url = str_replace('//', '/', $url);
+        }
+        return $url;
+    }
+}

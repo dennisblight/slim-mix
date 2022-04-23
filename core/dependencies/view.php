@@ -24,6 +24,8 @@ $container->set(View::class, function(Container $container) {
 
     $blade->setAliasClasses($aliasClasses->all());
     $blade->setBaseUrl($baseUrl);
+    $blade->share('container', $container);
+    $blade->share('config', $container->get('settings'));
 
     return $blade;
 });

@@ -43,13 +43,17 @@ abstract class AbstractForm extends AbstractEntity
         parent::__set($name, $value);
     }
 
-    public function getValidator(): Validatable
+    public function getValidator(): ?Validatable
     {
-        return new Rules\AlwaysValid();
+        return null;
     }
 
     public function validate()
     {
-        $this->getValidator()->assert($this->all());
+        $validator = $this->getValidator();
+        if(!is_null($validator))
+        {
+            $validator->assert($this->all());
+        }
     }
 }

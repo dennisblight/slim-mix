@@ -23,9 +23,6 @@
         "symfony/filesystem": "^5.4",
         "symfony/asset": "^5.4",
         "phpfastcache/phpfastcache": "^8.1",
-        "cakephp/datasource": "^4.3",
-        "cakephp/database": "^4.3",
-        "cakephp/orm": "^4.3",
         "eftec/bladeone": "^4.5",
         "bryanjhv/slim-session": "^4.1"
     }
