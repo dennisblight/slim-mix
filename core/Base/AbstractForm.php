@@ -13,16 +13,28 @@ abstract class AbstractForm extends AbstractEntity
     /** @var bool */
     public $removeInvisibleCharacters = true;
 
-    public function __construct(ServerRequest $request)
+    public function __construct(?ServerRequest $request)
     {
-        $params = $request->getQueryParams() ?? [];
-        if($request->getMethod() == 'POST')
+        if(!is_null($request))
         {
-            $params = array_merge($params, $request->getParsedBody() ?? []);
-        }
+            $params = $request->getQueryParams() ?? [];
+            if($request->getMethod() == 'POST')
+            {
+                $params = array_merge($params, $request->getParsedBody() ?? []);
+            }
 
-        parent::__construct($params);
-        $this->validate();
+            parent::__construct($params);
+            $this->validate();
+            $this->postSanitize();
+        }
+        else parent::__construct([]);
+    }
+
+    public static function fromArray(array $array)
+    {
+        $formData = new static(null);
+        $formData->initialize($array);
+        return $formData;
     }
 
     public function __set($name, $value)
@@ -55,5 +67,10 @@ abstract class AbstractForm extends AbstractEntity
         {
             $validator->assert($this->all());
         }
+    }
+
+    public function postSanitize()
+    {
+
     }
 }

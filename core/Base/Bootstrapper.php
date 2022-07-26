@@ -5,16 +5,18 @@ use Slim\App;
 use DI\Container;
 use Core\Collection;
 use Core\ErrorHandler;
-use Core\ErrorHandler\FormValidationHandler;
-use Core\ErrorHandler\SlimHttpHandler;
 use Core\Route\AnnotationRoute;
 use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequest;
-use Psr\Log\LoggerInterface;
-use Respect\Validation\Exceptions\ValidationException;
 use Slim\Exception\HttpException;
-use Slim\Handlers\Strategies\RequestHandler;
+use Laminas\Diactoros\ServerRequest;
 use Slim\Middleware\ErrorMiddleware;
+use Core\ErrorHandler\SlimHttpHandler;
+use Slim\Exception\HttpNotFoundException;
+use Core\ErrorHandler\FormValidationHandler;
+use Core\Middleware\CorsMiddleware;
+use Slim\Handlers\Strategies\RequestHandler;
+use Respect\Validation\Exceptions\ValidationException;
+use Symfony\Component\Console\Application as ConsoleApp;
 
 abstract class Bootstrapper
 {
@@ -36,7 +38,8 @@ abstract class Bootstrapper
 
         /** @var App */
         $app = $container->get(App::class);
-        $app->getRouteCollector()->setBasePath(get_base_path());
+        $basePath = get_base_path();
+        $app->getRouteCollector()->setBasePath($basePath);
     }
 
     public function registerConfig(Container $container)
@@ -160,10 +163,6 @@ abstract class Bootstrapper
                     
                     $load();
                 }
-                else
-                {
-                    $container->get('logger')->warning("Couldn't load helper $helperName at '$helperFile'");
-                }
             }
         }
     }
@@ -182,30 +181,27 @@ abstract class Bootstrapper
         });
 
         $middlewares = $settings->get('middleware', []);
-        foreach($middlewares as $index => $middleware)
+        foreach($middlewares as $middleware)
         {
-            if(is_string($middleware) && class_exists($middleware))
-            {
-                if(!$container->has($middleware))
-                {
-                    $container[$middleware] = function($container) use ($middleware) {
-                        return new $middleware($container);
-                    };
-                }
-                
-                $app->add($middleware);
-            }
-            elseif(is_callable($middleware))
-            {
-                $app->add($middleware);
-            }
-            else
-            {
-                $container->get('logger')->warning("Couldn't resolve middleware index {$index} -> {$middleware}");
-            }
+            $app->add($middleware);
         }
 
-        $app->addBodyParsingMiddleware();
+        if($settings->get('enableBodyParsing', false))
+        {
+            $app->addBodyParsingMiddleware();
+        }
+        
+        $cors = $settings->get('cors');
+        if($cors && $cors->get('enableCors', false))
+        {
+            $app->options('/{routes:.+}', function (Response $response) {
+                return $response;
+            });
+
+            $app->add(CorsMiddleware::class);
+        }
+
+        $app->addRoutingMiddleware();
     }
 
     public function registerErrorHandler(Container $container)
@@ -259,16 +255,24 @@ abstract class Bootstrapper
 
                 $load($app);
             }
-            else
-            {
-                $container->get('logger')->warning("Couldn't locate route '$route' file");
-            }
         }
 
         if($settings->get('annotationRouting', false))
         {
             $routingService = new AnnotationRoute($container);
             $routingService->register();
+        }
+    }
+
+    public function registerCommands(ConsoleApp $consoleApp, Container $container)
+    {
+        if($container->has('config.commands'))
+        {
+            $commands = $container->get('config.commands');
+            foreach($commands as $command)
+            {
+                $consoleApp->add($container->get($command));
+            }
         }
     }
 }

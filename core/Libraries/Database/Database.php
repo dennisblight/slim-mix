@@ -1,6 +1,7 @@
 <?php
 namespace Core\Libraries\Database;
 
+use Core\Collection;
 use Core\Libraries\Database\Driver\DBLibSqlServer;
 use Core\Libraries\Database\Driver\SQLServer;
 use Core\Libraries\Database\Driver\DefaultDriver;
@@ -10,14 +11,15 @@ use InvalidArgumentException;
 
 class Database
 {
+    /** @var Collection */
     private $config;
+
     private $default = null;
     private $connections = [];
 
     public function __construct(Container $container)
     {
         $this->config = $container->get('config.database');
-        // var_dump($this->config->has('connections'));exit;
     }
 
     public function connection($connection)
@@ -78,5 +80,10 @@ class Database
         }
         
         return $this->default;
+    }
+
+    public function getDefaultConnection()
+    {
+        return $this->connection($this->getDefaultConnectionName());
     }
 }

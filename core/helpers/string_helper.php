@@ -169,6 +169,40 @@ if(!function_exists('string_equals'))
     }
 }
 
+if(!function_exists('byte_format'))
+{
+    function byte_format($num, $precision = 1)
+	{
+		if ($num >= 1000000000000)
+		{
+			$num = round($num / 1099511627776, $precision);
+			$unit = 'TB';
+		}
+		elseif ($num >= 1000000000)
+		{
+			$num = round($num / 1073741824, $precision);
+			$unit = 'GB';
+		}
+		elseif ($num >= 1000000)
+		{
+			$num = round($num / 1048576, $precision);
+			$unit = 'MB';
+		}
+		elseif ($num >= 1000)
+		{
+			$num = round($num / 1024, $precision);
+			$unit = 'KB';
+		}
+		else
+		{
+			$unit = 'B';
+			return number_format($num).' '.$unit;
+		}
+
+		return number_format($num, $precision).' '.$unit;
+	}
+}
+
 if(!function_exists('urlsafe_base64_encode'))
 {
     function urlsafe_base64_encode($value)
@@ -182,5 +216,19 @@ if(!function_exists('urlsafe_base64_decode'))
     function urlsafe_base64_decode($value)
     {
         return base64_decode(strtr($value, '._-', '+/='));
+    }
+}
+
+if(!function_exists('id_number_format'))
+{
+    function id_number_format($value, $decimals = 0, $trimZeros = true)
+    {
+        $formatted = number_format($value, 0, ',', '.');
+        if(false !== strpos($formatted, ','))
+        {
+            $formatted = rtrim($formatted, '0');
+            $formatted = rtrim($formatted, ',');
+        }
+        return $formatted;
     }
 }

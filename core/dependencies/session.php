@@ -2,6 +2,7 @@
 
 use DI\Container;
 use Slim\Middleware\Session;
+use SlimSession\Helper;
 
 $container->set(Session::class, function(Container $container) {
     return new Session(
@@ -10,5 +11,9 @@ $container->set(Session::class, function(Container $container) {
 });
 
 $container->set('session', function() {
-    return new SlimSession\Helper();
+    return new \Core\Libraries\Session();
+});
+
+$container->set(\SlimSession\Helper::class, function() {
+    return new \Core\Libraries\Session();
 });

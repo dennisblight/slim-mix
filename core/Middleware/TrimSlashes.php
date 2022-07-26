@@ -10,7 +10,8 @@ class TrimSlashes
         
 		$uri = $request->getUri();
 		$path = $uri->getPath();
-		if ($path != '/' && substr($path, -1) == '/') {
+		if($path != '/' && substr($path, -1) == '/')
+		{
 			// recursively remove slashes when its more than 1 slash
 			while(substr($path, -1) == '/') {
 				$path = substr($path, 0, -1);

@@ -10,9 +10,14 @@ abstract class AbstractEntity extends AbstractCollection
      */
     public function __construct(array $data = [])
     {
-        if(is_array($this->properties))
+        $this->initialize($data);
+    }
+
+    protected function initialize(array $data = [])
+    {
+        if(is_array(static::$properties))
         {
-            foreach($this->properties as $field)
+            foreach(static::$properties as $field)
             {
                 $this->set($field, $data[$field] ?? null);
             }

@@ -2,8 +2,7 @@
 namespace Core\Annotation\Route;
 
 use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
-use Doctrine\Common\Annotations\Annotation\Target;
+use Exception;
 
 /**
  * @Annotation
@@ -25,7 +24,10 @@ class Middleware
                 || class_exists($value = 'App\\Middleware\\' . $baseName)
                 || class_exists($value = $value . 'Middleware')
             ;
-            return $valid ? $value : null;
+
+            if(!$valid) throw new Exception("Could not resolve \"$baseName\" middleware");
+
+            return $value;
         }, $values);
 
         $middlewares = array_filter(
