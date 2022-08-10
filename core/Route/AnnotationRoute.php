@@ -183,11 +183,11 @@ class AnnotationRoute
     private function cleanUrl($url)
     {
         $url = rtrim($url, '\/');
-        while(($pos = strpos($url, '//')) !== false)
+        while(strpos($url, '//') !== false)
         {
-            $url = str_replace('//', '/', $pos);
+            $url = str_replace('//', '/', $url);
         }
 
-        return $url;
+        return empty($url) ? '/' : $url;
     }
 }
