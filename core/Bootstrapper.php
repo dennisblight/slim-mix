@@ -1,11 +1,9 @@
 <?php
 namespace Core;
 
-use App\Commands\TestCommand;
-use Core\Base\Bootstrapper as BaseBootstrapper;
-use DI\Bridge\Slim\Bridge;
-use DI\Container;
 use Slim\App;
+use DI\Bridge\Slim\Bridge;
+use Core\Base\Bootstrapper as BaseBootstrapper;
 use Symfony\Component\Console\Application as ConsoleApp;
 
 final class Bootstrapper extends BaseBootstrapper

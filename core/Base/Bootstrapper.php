@@ -4,18 +4,11 @@ namespace Core\Base;
 use Slim\App;
 use DI\Container;
 use Core\Collection;
-use Core\ErrorHandler;
 use Core\Route\AnnotationRoute;
 use Laminas\Diactoros\Response;
-use Slim\Exception\HttpException;
+use Core\Middleware\CorsMiddleware;
 use Laminas\Diactoros\ServerRequest;
 use Slim\Middleware\ErrorMiddleware;
-use Core\ErrorHandler\SlimHttpHandler;
-use Slim\Exception\HttpNotFoundException;
-use Core\ErrorHandler\FormValidationHandler;
-use Core\Middleware\CorsMiddleware;
-use Slim\Handlers\Strategies\RequestHandler;
-use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\Console\Application as ConsoleApp;
 
 abstract class Bootstrapper
@@ -35,6 +28,19 @@ abstract class Bootstrapper
 
         $timezone = $settings->get('timezone', 'UTC');
         date_default_timezone_set($timezone);
+
+        if(!is_cli())
+        {
+            $path = rtrim($_SERVER['REQUEST_URI'], '/');
+            
+            while(strpos($path, '//') !== false)
+            {
+                $path = str_replace('//', '/', $path);
+            }
+
+            $_SERVER['REQUEST_URI'] = empty($path) ? '/' : $path;
+            // var_dump($_SERVER);
+        }
 
         /** @var App */
         $app = $container->get(App::class);

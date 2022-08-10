@@ -7,7 +7,6 @@ use Laminas\Diactoros\ServerRequest;
 class TrimSlashes
 {
     function __invoke(ServerRequest $request, $handler) {
-        
 		$uri = $request->getUri();
 		$path = $uri->getPath();
 		if($path != '/' && substr($path, -1) == '/')

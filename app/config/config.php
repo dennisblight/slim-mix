@@ -23,8 +23,8 @@ return [
     ],
 
     'middleware' => [
-        Slim\Middleware\Session::class,
         Core\Middleware\TrimSlashes::class,
+        Slim\Middleware\Session::class,
     ],
 
     'errors' => [
